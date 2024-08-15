@@ -22,7 +22,6 @@ public class FileProcessController {
     private Job job;
 
     @GetMapping("/loadCSVToDB")
-
     public void loadCSV() throws JobInstanceAlreadyCompleteException,
             JobExecutionAlreadyRunningException,
             JobParametersInvalidException,

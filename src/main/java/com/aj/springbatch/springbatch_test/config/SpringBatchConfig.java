@@ -19,7 +19,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import java.util.concurrent.Executor;
 
 @Configuration
 @EnableBatchProcessing
@@ -84,7 +87,7 @@ public class SpringBatchConfig {
                 .reader(read())
                 .processor(processor())
                 .writer(writer())
-                .taskExecutor(taskExecutor())
+                .taskExecutor(asyncThreadProcessor())
                 .build();
 
 
@@ -94,6 +97,17 @@ public class SpringBatchConfig {
         SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor();
         taskExecutor.setConcurrencyLimit(10);
         return taskExecutor;
+    }
+
+
+    private TaskExecutor asyncThreadProcessor(){
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(3);
+        executor.setMaxPoolSize(3);
+        executor.setQueueCapacity(150);
+        executor.setThreadNamePrefix("TestAJ");
+        executor.initialize();
+        return executor;
     }
 
 
